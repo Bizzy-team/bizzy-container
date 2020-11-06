@@ -1,31 +1,33 @@
 version: "3.8"
 services:
-  api:
-    build:
-      context: https://github.com/Bizzy-team/bizzy-api
-    ports:
-      - "8080:3002"
-      - "9229:9229"
-    env_file:
-      - .env
-    depends_on:
-      - db
-    volumes:
-      - ./
-  db:
-    image: mongo:3.6.20-xenial
-    ports:
-      - "27017:27017"
-    expose:
-      - 27017
-    volumes:
-     - mongodb:/data/db
-     - mongodb_config:/data/configdb
+  # api:
+  #   build:
+  #     context: https://github.com/Bizzy-team/bizzy-api
+  #   ports:
+  #     - "8080:3002"
+  #     - "9229:9229"
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     - db
+  #   volumes:
+  #     - ./
+  #     - /api/node_modules
+  # db:
+  #   image: mongo:3.6.20-xenial
+  #   ports:
+  #     - "27017:27017"
+  #   expose:
+  #     - 27017
+  #   volumes:
+  #    - mongodb:/data/db 
+  #    - mongodb_config:/data/configdb
   www:
     build:
-      context: https://github.com/Bizzy-team/bizzy
+      context: ../bizzy/
+      dockerfile: Dockerfile
     volumes:
-      - '.:/app'
+      - '../bizzy/:/app'
       - '/app/node_modules'
     ports:
       - 3001:3000
