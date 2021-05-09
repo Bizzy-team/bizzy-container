@@ -2,38 +2,41 @@ version: "3.8"
 services:
   api:
     build:
-      context: ../bizzy-api/
+      context: ../bizzy-api-monolith/
       dockerfile: dockerfile
     ports:
-      - "8080:3002"
+      - "5000:3002"
       - "9229:9229"
     env_file:
       - .env
+    volumes:
+      - ../bizzy-api-monolith/:/app
+      - /app/node_modules
+    command: npm start
     depends_on:
       - db
+  www:
+    build:
+      context: ../bizzy/
+      dockerfile: dockerfile
     volumes:
-      - ../bizzy-api/:/app
-      - /app/node_modules
-    command: sh -c "cd lambdas/home && serverless offline start"
+      - '../bizzy/:/app'
+      - '/app/node_modules'
+    ports:
+      - 3000:3000
+    depends_on:
+      - api
+    environment:
+      - CHOKIDAR_USEPOLLING=true
   db:
-    image: mongo:3.6.20-xenial
+    container_name: "db"
+    image: mongo:4
     ports:
       - "27017:27017"
     expose:
       - 27017
-    command: >
-      bash -c "mongod && show dbs"
-  # www:
-  #   build:
-  #     context: ../bizzy/
-  #     dockerfile: dockerfile
-  #   volumes:
-  #     - '../bizzy/:/app'
-  #     - '/app/node_modules'
-  #   ports:
-  #     - 3001:3000
-  #   depends_on:
-  #     - api
-  #     - db
-  #   environment:
-  #     - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
