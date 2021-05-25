@@ -15,7 +15,7 @@ services:
     command: npm start
     depends_on:
       - db
-  www:
+  app:
     build:
       context: ../bizzy/
       dockerfile: dockerfile
@@ -26,6 +26,17 @@ services:
       - 3000:3000
     depends_on:
       - api
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+  www:
+    build:
+      context: ../www/
+      dockerfile: dockerfile
+    volumes:
+      - '../www/:/www'
+      - '/www/node_modules'
+    ports:
+      - 8080:8080
     environment:
       - CHOKIDAR_USEPOLLING=true
   db:
